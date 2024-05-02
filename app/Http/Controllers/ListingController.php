@@ -11,6 +11,8 @@ class ListingController extends Controller
     //
     public function index()
     {
+        //Mail::to('bilroum@gmail.com')->send(new WelcomeMail());
+
         // dd(request());
         // dd(Listing::latest()->filter(request(['tag', 'keywords', 'location']))->paginate(3),);
         return view('listings.index', [

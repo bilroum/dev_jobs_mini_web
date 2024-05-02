@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -29,7 +31,28 @@ class UserController extends Controller
 
         auth()->login($user);
 
-        return redirect('/')->with('success', 'You are logged in!');
+        event(new Registered($user));
+
+        return redirect('/')->with('success', 'Successfully logged in!');
+    }
+
+    public function verifyNotice()
+    {
+        return view('auth.verify-email');
+    }
+
+    public function verifyEmail(EmailVerificationRequest $request)
+    {
+        $request->fulfill();
+
+        return redirect()->intended();
+    }
+
+    public function verifyHandler(Request $request)
+    {
+        $request->user()->sendEmailVerificationNotification();
+
+        return back()->with('message', 'Verification link sent!');
     }
 
     public function logout(Request $request)
@@ -63,4 +86,5 @@ class UserController extends Controller
         return back()->withErrors(['email' => 'Invalid credentials'])->onlyInput('email');
 
     }
+
 }
