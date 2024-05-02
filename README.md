@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-
 # developer jobs
 
 A mini web-app for developer jobs for checking out Laravel 11. It is made with Laravel 11 and MySQL and incudes vite (for Tailwind setup) and PHPUnit for testing. Authorization and Authentication is implemented.
@@ -70,5 +68,3 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 # The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-
-> > > > > > > origin/main
