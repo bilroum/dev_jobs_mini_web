@@ -42,3 +42,16 @@ Route::post('/logout', [UserController::class, 'logout'])->middleware('auth');
 
 Route::get('/login', [UserController::class, 'login'])->name('login')->middleware('guest');
 Route::post('/users/authenticate', [UserController::class, 'authenticate']);
+
+//Show the view resetpassword
+Route::get('/forgot-password', [UserController::class, 'passwordRequest'])->middleware('guest')->name('password.request');
+
+//Handling the form submission
+Route::post('/forgot-password', [UserController::class, 'passwordHandler'])->middleware('guest')->name('password.email');
+Route::get('/auth-waiting', [UserController::class, 'waiting'])->middleware('guest');
+
+//Show the view for registrate new password
+Route::get('/reset-password/{token}', [UserController::class, 'getPasswordToken'])->middleware('guest')->name('password.reset');
+
+//Handling the form submission for the new password and update it
+Route::post('/reset-password', [UserController::class, 'handleNewPassword'])->middleware('guest')->name('password.update');

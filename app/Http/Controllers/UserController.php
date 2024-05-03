@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -87,4 +91,57 @@ class UserController extends Controller
 
     }
 
+    public function passwordRequest()
+    {
+        return view('auth.forgot-password');
+    }
+
+    public function passwordHandler(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        return $status === Password::RESET_LINK_SENT
+        ? redirect('/auth-waiting')
+        : back()->withErrors(['success' => __($status)]);
+    }
+
+    public function waiting()
+    {
+        return view('auth.waiting');
+    }
+
+    public function getPasswordToken(string $token)
+    {
+        return view('auth.reset-password', ['token' => $token]);
+    }
+
+    public function handleNewPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:4|confirmed',
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function (User $user, string $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password),
+                ])->setRememberToken(Str::random(60));
+
+                $user->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+        ? redirect()->route('login')->with('success', __($status))
+        : back()->withErrors(['email' => [__($status)]]);
+    }
 }

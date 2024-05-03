@@ -1,20 +1,21 @@
 @extends('layout')
 @section('content')
 @include('partials._innerBanner')
-
-<div class="flex flex-col justify-center items-center container mx-auto mt-11 px-6">
-  <x-flash-message />
-
-  <div
-  class="bg-white container max-w-md mx-auto p-5 rounded-md shadow-2xl text-gray-700"
-  >
-        <form method="POST" action="/users/authenticate">
+<div class="flex justify-center items-center container mx-auto mt-11 px-6">
+      <div
+        class="bg-white container max-w-md mx-auto p-5 rounded-md shadow-2xl text-gray-700"
+      >
+        <form  method='POST' action="/reset-password">
             @csrf
           <h1
             class="max-w-md pb-4 text-3xl font-extrabold text-center text-gray-700 md:text-4xl"
           >
-            Login
+            New Password
           </h1>
+
+          <p class="mt-4 text-gray-700">
+            Please give in a new password and confirm it.
+          </p>
 
           <div class="mb-4">
             <input
@@ -28,6 +29,7 @@
             <p class="text-red-500 mt-1">{{$message}}</p>
             @enderror
           </div>
+
           <div class="mb-4">
             <input
               type="password"
@@ -40,24 +42,26 @@
             @enderror
           </div>
 
+          <div class="mb-4">
+            <input
+              type="password"
+              name="password_confirmation"
+              placeholder="Confirm Password"
+              class="w-full px-4 py-2 border rounded focus:outline-neonGreenLight"
+            />
+            @error('password_confirmation')
+            <p class="text-red-500 mt-1">{{$message}}</p>
+            @enderror
+          </div>
+
+          <input type="hidden" name="token" value="{{ $token }}">
+
           <button
             type="submit"
             class="w-full bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded focus:outline-neonGreenLight"
-          >Login</button>
+          >Reset</button>
 
-          <p class="mt-4 text-gray-500">
-            Don't have an account?
-            <a class="text-gray-700 hover:text-neonGreen" href="/register"
-              >Register</a
-            >
-          </p>
 
-          <p class="mt-4 text-gray-500">
-            Forgot password? You can Reset it.
-            <a class="text-gray-700 hover:text-neonGreen" href="/forgot-password"
-              >Reset Password</a
-            >
-          </p>
         </form>
       </div>
     </div>
