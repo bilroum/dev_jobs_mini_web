@@ -12,6 +12,7 @@
         "google/apiclient": "^2.16",
         "itsgoingd/clockwork": "^5.2",
         "laravel/framework": "^11.0",
+        "laravel/socialite": "^5.14",
         "laravel/tinker": "^2.9"
     },
     "require-dev": {

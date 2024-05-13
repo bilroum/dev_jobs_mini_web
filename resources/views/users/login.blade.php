@@ -58,6 +58,12 @@
               >Reset Password</a
             >
           </p>
+          <p class="mt-4 text-gray-500">
+            Sign in with google?
+            <a class="text-gray-700 hover:text-neonGreen" href="/auth/redirect"
+              >Google Signin</a
+            >
+          </p>
         </form>
       </div>
     </div>

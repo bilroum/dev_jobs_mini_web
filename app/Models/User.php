@@ -21,6 +21,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
+        'google_id', // Assuming you have a 'google_id' column in your database to store Google IDs
+        'google_token', // Add this line to allow mass assignment of 'google_token'
+        'google_refresh_token', // Add this line to allow mass assignment of 'google_refresh_token'
+
     ];
 
     /**
