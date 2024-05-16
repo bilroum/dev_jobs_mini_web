@@ -1,10 +1,9 @@
 <?php
 
 use App\Http\Controllers\ListingController;
+use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\UserController;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
-use Laravel\Socialite\Facades\Socialite;
 
 Route::get('/', [ListingController::class, 'index']);
 
@@ -58,41 +57,6 @@ Route::get('/reset-password/{token}', [UserController::class, 'getPasswordToken'
 //Handling the form submission for the new password and update it
 Route::post('/reset-password', [UserController::class, 'handleNewPassword'])->middleware('guest')->name('password.update');
 
-Route::get('/auth/redirect', function () {
-    try {
-        return Socialite::driver('google')->redirect();
-    } catch (Exception $e) {
-        // Handle any exceptions that occur during the authentication process
-        //dd($e);
-        return redirect()->route('login')->with('success', 'An error occurred during Google authentication.');
-    }
-});
+Route::get('/auth/{provider}/redirect', [ProviderController::class, 'redirect']);
 
-Route::get('/auth/callback', function () {
-    try {
-        $googleUser = Socialite::driver('google')->user();
-
-        if (!$googleUser) {
-            // Handle the case where the user's information could not be retrieved
-            return redirect()->route('login')->with('error', 'Failed to retrieve user information from Google.');
-        }
-
-        $user = User::updateOrCreate([
-            'google_id' => $googleUser->id,
-        ], [
-            'name' => $googleUser->name,
-            'email' => $googleUser->email,
-            'google_token' => $googleUser->token,
-            'google_refresh_token' => $googleUser->refreshToken,
-        ]);
-
-        // Log in the user
-        Auth::login($user);
-
-        // Redirect the user to the desired location
-        return redirect('/');
-    } catch (Exception $e) {
-        // Handle any other exceptions that may occur during the authentication process
-        return redirect()->route('login')->with('error', 'An error occurred during Google authentication.');
-    }
-});
+Route::get('/auth/{provider}/callback', [ProviderController::class, 'callback']);

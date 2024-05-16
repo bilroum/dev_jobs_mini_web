@@ -76,15 +76,25 @@ class UserController extends Controller
 
     public function authenticate(Request $request)
     {
+
         $formfields = $request->validate([
             'email' => ['required', 'email'],
             'password' => 'required',
         ]);
 
-        if (auth()->attempt($formfields)) {
-            $request->session()->regenerate();
+        $user = User::where('email', $formfields['email'])->first();
 
-            return redirect('/')->with('success', 'You are logged in!');
+        if ($user) {
+            if ($user->provider === 'google') {
+                // return redirect('/login')->withErrors(['password' =>'You are registerd via Google. Please login via Google option']);
+                return redirect("/auth/{$user->provider}/redirect");
+            }
+
+            if (auth()->attempt($formfields)) {
+                $request->session()->regenerate();
+
+                return redirect('/')->with('success', 'You are logged in!');
+            }
         }
 
         return back()->withErrors(['email' => 'Invalid credentials'])->onlyInput('email');
